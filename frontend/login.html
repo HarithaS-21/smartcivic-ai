@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - SMARTCIVIC AI</title>
+
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+
+    <div class="auth-container">
+
+        <!-- LEFT SIDE -->
+        <div class="auth-left">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    🏙️
+                </div>
+
+                <div>
+                    <h1>SMARTCIVIC <span>AI</span></h1>
+                    <p>Intelligent Civic Complaint Management</p>
+                </div>
+
+            </div>
+
+
+            <div class="hero-content">
+
+                <div class="small-label">
+                    AI-POWERED SMART CITY PLATFORM
+                </div>
+
+                <h2>
+                    Make Your City<br>
+                    <span>Smarter & Better.</span>
+                </h2>
+
+                <p>
+                    Report civic problems easily and let AI help
+                    identify, prioritize and manage community issues.
+                </p>
+
+
+                <div class="features">
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            🤖
+                        </div>
+
+                        <div>
+                            <h3>AI Classification</h3>
+                            <p>Automatically identifies complaint categories.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            ⚡
+                        </div>
+
+                        <div>
+                            <h3>Smart Priority</h3>
+                            <p>Detects urgent civic issues automatically.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            📊
+                        </div>
+
+                        <div>
+                            <h3>Smart Management</h3>
+                            <p>Track complaints from report to resolution.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="left-footer">
+                SmartCivic AI • Building Better Communities
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="auth-right">
+
+            <div class="login-card">
+
+                <div class="mobile-logo">
+                    🏙️
+                </div>
+
+                <div class="form-header">
+
+                    <span class="welcome-tag">
+                        WELCOME BACK
+                    </span>
+
+                    <h2>Sign in to your account</h2>
+
+                    <p>
+                        Access your SmartCivic AI dashboard
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm">
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">
+                                ✉️
+                            </span>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="Enter your email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="input-box">
+
+                            <span class="input-icon">
+                                🔒
+                            </span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                onclick="togglePassword()"
+                            >
+                                👁️
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="login-btn"
+                    >
+                        <span>Login to SmartCivic AI</span>
+                        <span class="arrow">→</span>
+                    </button>
+
+
+                    <p
+                        id="message"
+                        class="message"
+                    ></p>
+
+                </form>
+
+
+                <div class="divider">
+                    <span>NEW TO SMARTCIVIC AI?</span>
+                </div>
+
+
+                <a
+                    href="register.html"
+                    class="register-btn"
+                >
+                    Create an Account
+                </a>
+
+
+                <p class="security-text">
+                    🔐 Your account information is securely protected.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function togglePassword() {
+
+            const password =
+                document.getElementById("password");
+
+            const button =
+                document.querySelector(".password-toggle");
+
+            if (password.type === "password") {
+
+                password.type = "text";
+                button.textContent = "🙈";
+
+            } else {
+
+                password.type = "password";
+                button.textContent = "👁️";
+
+            }
+
+        }
+
+
+        document
+            .getElementById("loginForm")
+            .addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+                const email =
+                    document.getElementById("email").value.trim();
+
+                const password =
+                    document.getElementById("password").value;
+
+                const message =
+                    document.getElementById("message");
+
+                const loginButton =
+                    document.querySelector(".login-btn");
+
+
+                message.textContent = "";
+                message.className = "message";
+
+
+                loginButton.disabled = true;
+
+                loginButton.innerHTML =
+                    '<span>Signing in...</span><span class="loader"></span>';
+
+
+                try {
+
+                    const response = await fetch(
+                        "http://localhost:5000/api/login",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        }
+                    );
+
+
+                    const data = await response.json();
+
+
+                    if (response.ok) {
+
+                        message.className =
+                            "message success";
+
+                        message.textContent =
+                            "Login successful! Redirecting...";
+
+
+                        localStorage.setItem(
+                            "user",
+                            JSON.stringify(data.user)
+                        );
+
+
+                        setTimeout(function () {
+
+                            if (data.user && data.user.role === "admin") {
+                                window.location.href = "admin.html";
+                            } else {
+                                window.location.href = "dashboard.html";
+                            }
+
+                        }, 700);
+
+
+                    } else {
+
+                        message.className =
+                            "message error";
+
+                        message.textContent =
+                            data.message ||
+                            "Invalid email or password";
+
+
+                        loginButton.disabled = false;
+
+                        loginButton.innerHTML =
+                            '<span>Login to SmartCivic AI</span><span class="arrow">→</span>';
+
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    message.className =
+                        "message error";
+
+                    message.textContent =
+                        "Unable to connect to server. Please make sure the backend is running.";
+
+
+                    loginButton.disabled = false;
+
+                    loginButton.innerHTML =
+                        '<span>Login to SmartCivic AI</span><span class="arrow">→</span>';
+
+                }
+
+            });
+
+    </script>
+
+    <script src="i18n.js"></script>
+
+</body>
+
+</html>

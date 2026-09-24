@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCivic AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            SmartCivic <span>AI</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#home" data-i18n="nav_home">Home</a>
+            <a href="#features" data-i18n="nav_features">Features</a>
+            <a href="#about" data-i18n="nav_about">About</a>
+            <div id="langSelectorBox" style="display:inline-block;"></div>
+            <button onclick="goToLogin()" data-i18n="nav_login">Login</button>
+        </div>
+    </nav>
+
+
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+
+            <div class="badge">
+                🤖 AI-Powered Civic Management
+            </div>
+
+            <h1>
+                Report Problems.<br>
+                <span>Build Better Communities.</span>
+            </h1>
+
+            <p>
+                SmartCivic AI helps citizens report civic problems
+                and uses artificial intelligence to categorize,
+                prioritize and track complaints.
+            </p>
+
+            <div class="hero-buttons">
+                <button class="primary-btn" onclick="reportIssue()">
+                    Report an Issue
+                </button>
+
+                <button class="secondary-btn" onclick="goToLogin()">
+                    Login
+                </button>
+            </div>
+
+        </div>
+
+
+        <div class="hero-card">
+
+            <div class="card-header">
+                <span>Complaint Status</span>
+                <span class="live">● LIVE</span>
+            </div>
+
+            <div class="complaint">
+                <div class="complaint-icon">💡</div>
+
+                <div>
+                    <h3>Streetlight Issue</h3>
+                    <p>Near Main Road</p>
+                </div>
+
+                <span class="status">Resolved</span>
+            </div>
+
+            <div class="complaint">
+                <div class="complaint-icon">🗑️</div>
+
+                <div>
+                    <h3>Garbage Overflow</h3>
+                    <p>Market Area</p>
+                </div>
+
+                <span class="status pending">Pending</span>
+            </div>
+
+            <div class="complaint">
+                <div class="complaint-icon">🚧</div>
+
+                <div>
+                    <h3>Road Damage</h3>
+                    <p>College Road</p>
+                </div>
+
+                <span class="status high">High Priority</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="features" id="features">
+
+        <h2>Smart Features</h2>
+
+        <p class="section-text">
+            Technology that makes civic issue management
+            faster and more transparent.
+        </p>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Classification</h3>
+                <p>
+                    Automatically identifies the category
+                    of the reported civic issue.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Priority Detection</h3>
+                <p>
+                    AI helps determine whether an issue
+                    requires low, medium or high priority.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Smart Analytics</h3>
+                <p>
+                    View complaint statistics and
+                    identify common civic problems.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3>Location Tracking</h3>
+                <p>
+                    Track reported issues based on
+                    their location.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="about" id="about">
+
+        <div>
+            <h2>Making Civic Services Smarter</h2>
+
+            <p>
+                SmartCivic AI connects citizens and service
+                departments through a centralized complaint
+                management platform.
+            </p>
+
+            <p>
+                From reporting an issue to tracking its
+                resolution, every step can be monitored
+                through one platform.
+            </p>
+        </div>
+
+        <div class="about-box">
+            <h3>Our Goal</h3>
+            <p>
+                Faster reporting. Smarter decisions.
+                Better communities.
+            </p>
+        </div>
+
+    </section>
+
+
+    <footer>
+        <h3>SmartCivic AI</h3>
+        <p>AI-Powered Civic Complaint Management System</p>
+        <p>© 2026 SmartCivic AI</p>
+    </footer>
+
+
+    <script src="script.js"></script>
+    <script src="i18n.js"></script>
+    <script src="chatbot.js"></script>
+
+</body>
+</html>

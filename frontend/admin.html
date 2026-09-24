@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Operations Portal - SmartCivic AI</title>
+
+    <!-- Leaflet & Chart.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="chatbot.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a8a 100%);
+            color: white;
+            padding: 16px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.2);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-brand h2 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .admin-badge {
+            background: #3b82f6;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .citizen-view-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .citizen-view-btn:hover {
+            background: white;
+            color: #0f172a;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 24px 60px;
+        }
+
+        .welcome {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .welcome h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .welcome p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Metric Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            padding: 18px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card h3 {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .card .number {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .card.total .card-icon { background: #e0f2fe; color: #0284c7; }
+        .card.pending .card-icon { background: #fef3c7; color: #d97706; }
+        .card.progress .card-icon { background: #e0e7ff; color: #4338ca; }
+        .card.resolved .card-icon { background: #dcfce7; color: #16a34a; }
+        .card.flagged .card-icon { background: #fee2e2; color: #dc2626; }
+
+        /* Map Section */
+        .map-section {
+            background: white;
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .map-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        #cityMap {
+            width: 100%;
+            height: 380px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            z-index: 1;
+        }
+
+        /* Filter Controls */
+        .controls-card {
+            background: white;
+            padding: 18px 24px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 14px;
+            width: 320px;
+            max-width: 100%;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 13.5px;
+            margin-left: 8px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #1e3a8a;
+            color: white;
+            border-color: #1e3a8a;
+        }
+
+        .filter-btn.flagged-tab.active {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .export-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+        }
+
+        th {
+            background: #0f172a;
+            color: white;
+            padding: 13px 16px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        .priority-badge {
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .priority-high { background: #fee2e2; color: #dc2626; }
+        .priority-medium { background: #fef3c7; color: #d97706; }
+        .priority-low { background: #dcfce7; color: #16a34a; }
+
+        .table-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .table-thumb:hover { transform: scale(1.1); }
+
+        select.admin-select {
+            padding: 6px 10px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 12.5px;
+            background: white;
+            outline: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        select.admin-select:focus {
+            border-color: #2563eb;
+        }
+
+        .flag-tag {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        /* Analytics Section */
+        .analytics-section {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .analytics-section h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .chart-card {
+            border: 1px solid #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+
+        .chart-card h3 {
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-modal.show { display: flex; }
+        .lightbox-img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 8px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 36px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .cards { grid-template-columns: repeat(3, 1fr); }
+            .charts-container { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .cards { grid-template-columns: repeat(2, 1fr); }
+            header { padding: 14px 18px; }
+            .container { padding: 16px 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-brand">
+        <span style="font-size:24px;">🏛️</span>
+        <div>
+            <h2 data-i18n="admin_brand">SmartCivic Operations</h2>
+        </div>
+        <span class="admin-badge" data-i18n="admin_badge">Municipal Admin</span>
+    </div>
+
+    <div class="header-actions">
+        <div id="langSelectorBox"></div>
+        <button class="citizen-view-btn" onclick="goToCitizenView()" data-i18n="nav_citizen_view">
+            Citizen View 👤
+        </button>
+        <button class="logout-btn" onclick="logout()" data-i18n="nav_logout">
+            Logout
+        </button>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="welcome">
+        <div>
+            <h1 data-i18n="admin_title">City Civic Command Center</h1>
+            <p data-i18n="admin_subtitle">Real-time intake, AI triage, GPS dispatch, fraud moderation, and department routing.</p>
+        </div>
+        <div>
+            <button class="export-btn" onclick="exportToCSV()" data-i18n="admin_export_btn">
+                📥 Export CSV Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="cards">
+        <div class="card total">
+            <div>
+                <h3 data-i18n="stat_total">Total Reports</h3>
+                <div class="number" id="totalReports">0</div>
+            </div>
+            <div class="card-icon">📋</div>
+        </div>
+
+        <div class="card pending">
+            <div>
+                <h3 data-i18n="stat_pending_triage">Pending Triage</h3>
+                <div class="number" id="pendingReports">0</div>
+            </div>
+            <div class="card-icon">⏳</div>
+        </div>
+
+        <div class="card progress">
+            <div>
+                <h3 data-i18n="stat_progress">In Progress</h3>
+                <div class="number" id="progressReports">0</div>
+            </div>
+            <div class="card-icon">⚡</div>
+        </div>
+
+        <div class="card resolved">
+            <div>
+                <h3 data-i18n="stat_resolved">Resolved</h3>
+                <div class="number" id="resolvedReports">0</div>
+            </div>
+            <div class="card-icon">✓</div>
+        </div>
+
+        <div class="card flagged">
+            <div>
+                <h3 data-i18n="stat_flagged">⚠️ Moderation Flagged</h3>
+                <div class="number" id="flaggedReports">0</div>
+            </div>
+            <div class="card-icon">🛡️</div>
+        </div>
+    </div>
+
+    <!-- City Map Incident Overview -->
+    <div class="map-section">
+        <div class="map-header">
+            <h3 data-i18n="admin_map_title">📍 Citywide Incident Map (Active Complaints)</h3>
+            <span data-i18n="admin_map_legend" style="font-size:12px;color:#64748b;">🔴 High Priority &nbsp;|&nbsp; 🟡 Medium &nbsp;|&nbsp; 🟢 Resolved</span>
+        </div>
+        <div id="cityMap"></div>
+    </div>
+
+    <!-- Controls / Search / Filter Bar -->
+    <div class="controls-card">
+        <div class="search-box">
+            <span>🔍</span>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search citizen, title, category, ID..."
+                data-i18n-ph="admin_search_ph"
+                onkeyup="searchComplaints()"
+            >
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-btn active" onclick="setFilter('all', this)" data-i18n="filter_all">All</button>
+            <button class="filter-btn flagged-tab" onclick="setFilter('flagged', this)" data-i18n="filter_flagged">⚠️ Flagged / Spam</button>
+            <button class="filter-btn" onclick="setFilter('high', this)" data-i18n="filter_high">High Priority</button>
+            <button class="filter-btn" onclick="setFilter('Pending', this)" data-i18n="filter_pending">Pending</button>
+            <button class="filter-btn" onclick="setFilter('In Progress', this)" data-i18n="filter_progress">In Progress</button>
+            <button class="filter-btn" onclick="setFilter('Resolved', this)" data-i18n="filter_resolved">Resolved</button>
+        </div>
+    </div>
+
+    <!-- Complaints Master Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th data-i18n="th_photo">Photo</th>
+                    <th data-i18n="th_citizen">Complaint ID & Citizen</th>
+                    <th data-i18n="th_issue">Issue Title & Details</th>
+                    <th data-i18n="th_category">Category (AI)</th>
+                    <th data-i18n="th_priority">Priority</th>
+                    <th data-i18n="th_department">Department</th>
+                    <th data-i18n="th_location">Location / GPS</th>
+                    <th data-i18n="th_credibility">AI Credibility</th>
+                    <th data-i18n="th_action">Status Action</th>
+                </tr>
+            </thead>
+            <tbody id="complaintTable">
+                <tr>
+                    <td colspan="9" data-i18n="msg_loading" style="text-align:center;padding:30px;color:#64748b;">
+                        Loading complaints from city database...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- City Complaint Analytics -->
+    <div class="analytics-section">
+        <h2 data-i18n="admin_analytics_title">📊 Municipal Complaint Analytics</h2>
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3 data-i18n="admin_chart_cat">Complaints by Category</h3>
+                <canvas id="categoryChart" height="240"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 data-i18n="admin_chart_dept">Complaints by Department</h3>
+                <canvas id="departmentChart" height="240"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Photo Lightbox Modal -->
+<div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightboxImg" class="lightbox-img" src="" alt="Enlarged complaint photo">
+</div>
+
+<!-- Leaflet JS, i18n & Chatbot -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="i18n.js"></script>
+<script src="chatbot.js"></script>
+
+<script>
+// ==========================================
+// ROLE-BASED ACCESS CONTROL (RBAC) CHECK
+// ==========================================
+const currentUser = JSON.parse(localStorage.getItem("user"));
+if (!currentUser) {
+    window.location.href = "login.html";
+} else if (currentUser.role !== "admin") {
+    alert("Access Denied: This operations console requires Administrator privileges. Redirecting to Citizen Dashboard.");
+    window.location.href = "dashboard.html";
+}
+
+let allComplaints = [];
+let activeFilter = "all";
+let categoryChart = null;
+let departmentChart = null;
+let cityMap = null;
+let mapMarkers = [];
+
+// Navigation helpers
+function goToCitizenView() {
+    window.location.href = "dashboard.html";
+}
+
+function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+
+// Lightbox modal helpers
+function openLightbox(url) {
+    const modal = document.getElementById("lightboxModal");
+    const img = document.getElementById("lightboxImg");
+    img.src = url;
+    modal.classList.add("show");
+}
+
+function closeLightbox() {
+    document.getElementById("lightboxModal").classList.remove("show");
+}
+
+// Initialize Leaflet City Map
+function initCityMap() {
+    if (cityMap) return;
+
+    cityMap = L.map('cityMap', {
+        scrollWheelZoom: true
+    }).setView([13.0827, 80.2707], 12);
+
+    // 100% Free, High Resolution, Zero-Watermark Esri GIS Layers
+    const streetLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Street Map',
+        maxZoom: 19
+    });
+
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Satellite Imagery',
+        maxZoom: 19
+    });
+
+    const topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Topo Map',
+        maxZoom: 19
+    });
+
+    streetLayer.addTo(cityMap);
+
+    const baseMaps = {
+        "🗺️ City Street Map": streetLayer,
+        "🛰️ Satellite View": satelliteLayer,
+        "🏔️ Topographic": topoLayer
+    };
+
+    L.control.layers(baseMaps, null, { position: 'topright' }).addTo(cityMap);
+
+    setTimeout(() => {
+        if (cityMap) cityMap.invalidateSize();
+    }, 250);
+}
+
+function updateCityMapMarkers(complaints) {
+    if (!cityMap) initCityMap();
+
+    // Clear existing markers
+    mapMarkers.forEach(m => cityMap.removeLayer(m));
+    mapMarkers = [];
+
+    const bounds = [];
+
+    complaints.forEach(complaint => {
+        if (complaint.latitude && complaint.longitude) {
+            let markerColor = "#eab308"; // Medium / Pending
+            if (complaint.priority === "High") markerColor = "#ef4444";
+            if (complaint.status === "Resolved") markerColor = "#22c55e";
+
+            const customIcon = L.divIcon({
+                className: 'custom-pin',
+                html: `<div style="background:${markerColor};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 5px rgba(0,0,0,0.5);"></div>`,
+                iconSize: [14, 14]
+            });
+
+            const marker = L.marker([complaint.latitude, complaint.longitude], { icon: customIcon }).addTo(cityMap);
+
+            marker.bindPopup(`
+                <div style="font-size:12.5px;">
+                    <strong>#${complaint.complaintId || 'SC'}</strong><br>
+                    <b>${complaint.title}</b><br>
+                    <span>Category: ${complaint.category}</span><br>
+                    <span>Status: <b>${complaint.status}</b></span>
+                </div>
+            `);
+
+            mapMarkers.push(marker);
+            bounds.push([complaint.latitude, complaint.longitude]);
+        }
+    });
+
+    if (bounds.length > 0) {
+        cityMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
+    }
+
+    setTimeout(() => {
+        if (cityMap) cityMap.invalidateSize();
+    }, 300);
+}
+
+// Load All Complaints
+async function loadComplaints() {
+    try {
+        const response = await fetch("http://localhost:5000/api/complaints");
+        if (!response.ok) throw new Error("Failed to fetch complaints");
+
+        const complaints = await response.json();
+        allComplaints = complaints;
+
+        updateDashboardCounts(complaints);
+        applyFilterAndRender();
+        updateCityMapMarkers(complaints);
+        loadAnalytics(complaints);
+
+    } catch (error) {
+        console.error("Error loading complaints:", error);
+        document.getElementById("complaintTable").innerHTML = `
+            <tr>
+                <td colspan="9" style="text-align:center;color:#ef4444;padding:30px;">
+                    Failed to connect to server. Please verify backend is running on http://localhost:5000.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Counts Calculation
+function updateDashboardCounts(complaints) {
+    let pending = 0;
+    let progress = 0;
+    let resolved = 0;
+    let flagged = 0;
+
+    complaints.forEach(c => {
+        if (c.status === "Pending") pending++;
+        if (c.status === "In Progress") progress++;
+        if (c.status === "Resolved") resolved++;
+        if (c.isFlagged) flagged++;
+    });
+
+    document.getElementById("totalReports").textContent = complaints.length;
+    document.getElementById("pendingReports").textContent = pending;
+    document.getElementById("progressReports").textContent = progress;
+    document.getElementById("resolvedReports").textContent = resolved;
+    document.getElementById("flaggedReports").textContent = flagged;
+}
+
+// Filtering Logic
+function setFilter(type, btnElement) {
+    activeFilter = type;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    if (btnElement) btnElement.classList.add("active");
+    applyFilterAndRender();
+}
+
+function searchComplaints() {
+    applyFilterAndRender();
+}
+
+function applyFilterAndRender() {
+    const searchText = (document.getElementById("searchInput").value || "").toLowerCase().trim();
+
+    let filtered = allComplaints.filter(c => {
+        // Tab Filter
+        if (activeFilter === "flagged" && !c.isFlagged) return false;
+        if (activeFilter === "high" && c.priority !== "High") return false;
+        if (activeFilter === "Pending" && c.status !== "Pending") return false;
+        if (activeFilter === "In Progress" && c.status !== "In Progress") return false;
+        if (activeFilter === "Resolved" && c.status !== "Resolved") return false;
+
+        // Search text matching
+        if (searchText) {
+            const citizen = c.userId?.name || "";
+            const title = c.title || "";
+            const cat = c.category || "";
+            const id = c.complaintId || "";
+            const loc = c.location || "";
+            const match = (
+                citizen.toLowerCase().includes(searchText) ||
+                title.toLowerCase().includes(searchText) ||
+                cat.toLowerCase().includes(searchText) ||
+                id.toLowerCase().includes(searchText) ||
+                loc.toLowerCase().includes(searchText)
+            );
+            if (!match) return false;
+        }
+
+        return true;
+    });
+
+    displayComplaints(filtered);
+}
+
+// Render Complaints Table
+function displayComplaints(complaints) {
+    const table = document.getElementById("complaintTable");
+    table.innerHTML = "";
+
+    if (complaints.length === 0) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="9" style="text-align:center;padding:35px;color:#64748b;">
+                    ${typeof i18n !== "undefined" ? i18n.t("msg_no_complaints") : "No complaints found matching criteria."}
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    complaints.forEach(complaint => {
+        const row = document.createElement("tr");
+
+        const citizenName = complaint.userId?.name || "Anonymous";
+        const citizenEmail = complaint.userId?.email || "";
+        const rawPriority = complaint.priority || "Medium";
+        const priorityClass = rawPriority.toLowerCase();
+        const displayPriority = (typeof i18n !== "undefined" && i18n.translatePriority) ? i18n.translatePriority(rawPriority) : rawPriority;
+        const rawCategory = complaint.category || "Other";
+        const displayCategory = (typeof i18n !== "undefined" && i18n.translateCategory) ? i18n.translateCategory(rawCategory) : rawCategory;
+        const department = complaint.department || "Not Assigned";
+
+        // Photo thumbnail
+        let photoHtml = `<span style="color:#94a3b8;font-size:12px;">${typeof i18n !== "undefined" ? i18n.t("tag_no_photo") : "No photo"}</span>`;
+        if (complaint.imageUrl) {
+            const fullUrl = complaint.imageUrl.startsWith("http") ? complaint.imageUrl : `http://localhost:5000${complaint.imageUrl}`;
+            photoHtml = `
+                <img 
+                    src="${fullUrl}" 
+                    class="table-thumb" 
+                    title="Click to view full photo evidence"
+                    onclick="openLightbox('${fullUrl}')"
+                />
+            `;
+        }
+
+        // Location & GPS Pin
+        let locationHtml = `<span>${complaint.location}</span>`;
+        if (complaint.latitude && complaint.longitude) {
+            const viewMapTxt = typeof i18n !== "undefined" ? i18n.t("btn_view_map") : "📍 View on Map";
+            locationHtml += `
+                <br><a href="https://www.openstreetmap.org/?mlat=${complaint.latitude}&mlon=${complaint.longitude}#map=16/${complaint.latitude}/${complaint.longitude}" target="_blank" style="color:#0284c7;font-size:11.5px;text-decoration:none;font-weight:600;">
+                    ${viewMapTxt}
+                </a>
+            `;
+        }
+
+        // Credibility & Fraud Action
+        let credibilityHtml = `
+            <div>
+                <strong style="color:${complaint.credibilityScore >= 70 ? '#16a34a' : '#ea580c'};font-size:13px;">
+                    ${complaint.credibilityScore || 80}/100
+                </strong>
+        `;
+
+        const dismissFlagTxt = typeof i18n !== "undefined" ? i18n.t("btn_dismiss_flag") : "Dismiss Flag";
+        const flagSpamTxt = typeof i18n !== "undefined" ? i18n.t("btn_flag_spam") : "Flag Spam";
+
+        if (complaint.isFlagged) {
+            credibilityHtml += `
+                <div class="flag-tag" title="${complaint.flagReason}">⚠️ ${complaint.flagReason ? complaint.flagReason.slice(0, 25) + '...' : 'Flagged'}</div>
+                <div style="margin-top:4px;">
+                    <button onclick="toggleFlag('${complaint._id}', false)" style="background:#e2e8f0;border:none;padding:2px 6px;border-radius:4px;font-size:11px;cursor:pointer;">
+                        ${dismissFlagTxt}
+                    </button>
+                </div>
+            `;
+        } else {
+            credibilityHtml += `
+                <div style="margin-top:4px;">
+                    <button onclick="toggleFlag('${complaint._id}', true)" style="background:#fee2e2;color:#dc2626;border:none;padding:2px 6px;border-radius:4px;font-size:11px;cursor:pointer;">
+                        ${flagSpamTxt}
+                    </button>
+                </div>
+            `;
+        }
+        credibilityHtml += `</div>`;
+
+        const reportedTxt = typeof i18n !== "undefined" ? i18n.t("text_reported") : "Reported";
+
+        // Multilingual Category options
+        const catOpt = (val) => (typeof i18n !== "undefined" && i18n.translateCategory) ? i18n.translateCategory(val) : val;
+        // Multilingual Department options
+        const deptOpt = (val) => (typeof i18n !== "undefined" && i18n.translateDepartment) ? i18n.translateDepartment(val) : val;
+        // Multilingual Status options
+        const statusOpt = (val) => (typeof i18n !== "undefined" && i18n.translateStatus) ? i18n.translateStatus(val) : val;
+
+        row.innerHTML = `
+            <td>${photoHtml}</td>
+            <td>
+                <strong>${complaint.complaintId || 'SC-N/A'}</strong><br>
+                <span style="font-weight:600;color:#334155;">${citizenName}</span><br>
+                <span style="font-size:11.5px;color:#94a3b8;">${citizenEmail}</span>
+            </td>
+            <td>
+                <strong>${complaint.title || ""}</strong>
+                <p style="font-size:12px;color:#64748b;margin-top:3px;max-width:260px;line-height:1.4;">
+                    ${complaint.description ? complaint.description.slice(0, 90) + (complaint.description.length > 90 ? '...' : '') : ''}
+                </p>
+                <span style="font-size:11px;color:#94a3b8;">${reportedTxt}: ${new Date(complaint.createdAt).toLocaleDateString()}</span>
+            </td>
+            <td>
+                <select class="admin-select" onchange="updateCategory('${complaint._id}', this.value)" style="font-weight:600;color:#1e3a8a;">
+                    <option value="Drainage" ${rawCategory === "Drainage" ? "selected" : ""}>${catOpt("Drainage")}</option>
+                    <option value="Road Damage" ${rawCategory === "Road Damage" ? "selected" : ""}>${catOpt("Road Damage")}</option>
+                    <option value="Streetlight" ${rawCategory === "Streetlight" ? "selected" : ""}>${catOpt("Streetlight")}</option>
+                    <option value="Garbage" ${rawCategory === "Garbage" ? "selected" : ""}>${catOpt("Garbage")}</option>
+                    <option value="Water Leakage" ${rawCategory === "Water Leakage" ? "selected" : ""}>${catOpt("Water Leakage")}</option>
+                    <option value="Other" ${rawCategory === "Other" ? "selected" : ""}>${catOpt("Other")}</option>
+                </select>
+            </td>
+            <td>
+                <span class="priority-badge priority-${priorityClass}">
+                    ${displayPriority}
+                </span>
+            </td>
+            <td>
+                <select class="admin-select" onchange="updateDepartment('${complaint._id}', this.value)">
+                    <option value="Not Assigned" ${department === "Not Assigned" ? "selected" : ""}>${deptOpt("Not Assigned")}</option>
+                    <option value="Roads & Highways" ${department === "Roads & Highways" ? "selected" : ""}>${deptOpt("Roads & Highways")}</option>
+                    <option value="Sanitation" ${department === "Sanitation" ? "selected" : ""}>${deptOpt("Sanitation")}</option>
+                    <option value="Electrical Department" ${department === "Electrical Department" ? "selected" : ""}>${deptOpt("Electrical Department")}</option>
+                    <option value="Water Supply" ${department === "Water Supply" ? "selected" : ""}>${deptOpt("Water Supply")}</option>
+                    <option value="Drainage Department" ${department === "Drainage Department" ? "selected" : ""}>${deptOpt("Drainage Department")}</option>
+                    <option value="Municipal Affairs" ${department === "Municipal Affairs" ? "selected" : ""}>${deptOpt("Municipal Affairs")}</option>
+                </select>
+            </td>
+            <td>${locationHtml}</td>
+            <td>${credibilityHtml}</td>
+            <td>
+                <select class="admin-select" onchange="updateStatusPrompt('${complaint._id}', this.value)">
+                    <option value="Pending" ${complaint.status === "Pending" ? "selected" : ""}>${statusOpt("Pending")}</option>
+                    <option value="In Progress" ${complaint.status === "In Progress" ? "selected" : ""}>${statusOpt("In Progress")}</option>
+                    <option value="Resolved" ${complaint.status === "Resolved" ? "selected" : ""}>${statusOpt("Resolved")}</option>
+                </select>
+            </td>
+        `;
+
+        table.appendChild(row);
+    });
+}
+
+// Generate smart, category-aware resolution remarks for citizens
+function getSmartResolutionSuggestion(complaint) {
+    const lang = (typeof i18n !== "undefined" && i18n.currentLang) ? i18n.currentLang : "en";
+    const cat = ((complaint?.category) || "").toLowerCase();
+    const title = ((complaint?.title) || "").toLowerCase();
+    const desc = ((complaint?.description) || "").toLowerCase();
+    const fullText = `${title} ${desc} ${cat}`;
+
+    if (lang === "hi") {
+        if (fullText.includes("manhole") || fullText.includes("मैनहोल")) {
+            return "खुले मैनहोल का निरीक्षण कर मजबूत ढक्कन से सुरक्षित रूप से बंद किया गया तथा सुरक्षा खतरा दूर किया गया।";
+        }
+        if (fullText.includes("drain") || fullText.includes("sewer") || fullText.includes("gutter") || fullText.includes("नाला") || fullText.includes("नाली") || (fullText.includes("water") && fullText.includes("stagnant"))) {
+            return "नाली और जल निकासी की सफाई कर पानी का प्रवाह सुचारू किया गया।";
+        }
+        if (fullText.includes("pothole") || fullText.includes("crater") || (fullText.includes("road") && !fullText.includes("light")) || fullText.includes("गड्ढे") || fullText.includes("सड़क")) {
+            return "सड़क के गड्ढे भरकर सतह को डामर से समतल व दुरुस्त किया गया।";
+        }
+        if (fullText.includes("light") || fullText.includes("bulb") || fullText.includes("lamp") || fullText.includes("dark") || fullText.includes("electric") || fullText.includes("लाइट") || fullText.includes("स्ट्रीटलाइट")) {
+            return "खराब स्ट्रीटलाइट बल्ब एवं वायरिंग की मरम्मत कर प्रकाश व्यवस्था बहाल की गई।";
+        }
+        if (fullText.includes("garbage") || fullText.includes("waste") || fullText.includes("trash") || fullText.includes("kachra") || fullText.includes("कचरा")) {
+            return "कचरा पूरी तरह से हटाकर क्षेत्र को स्वच्छता टीम द्वारा साफ व कीटाणुरहित किया गया।";
+        }
+        if (fullText.includes("water") || fullText.includes("leak") || fullText.includes("pipe") || fullText.includes("रिसाव")) {
+            return "पाइपलाइन का रिसाव ठीक कर पानी की आपूर्ति सामान्य की गई।";
+        }
+        return `नगर निगम टीम द्वारा मौके पर निरीक्षण कर समस्या का समाधान किया गया।`;
+    }
+
+    if (lang === "ta") {
+        if (fullText.includes("manhole") || fullText.includes("மேன்ஹோல்") || fullText.includes("சாக்கடை மூடி")) {
+            return "திறந்திருந்த பாதாள சாக்கடை மேன்ஹோல் புதிய கனரக மூடி கொண்டு பாதுகாப்பாக மூடப்பட்டது.";
+        }
+        if (fullText.includes("drain") || fullText.includes("sewer") || fullText.includes("gutter") || fullText.includes("சாக்கடை") || (fullText.includes("water") && fullText.includes("stagnant"))) {
+            return "சாக்கடை வடிகால் தூர்வாரப்பட்டு நீர் ஓட்டம் சீரமைக்கப்பட்டது.";
+        }
+        if (fullText.includes("pothole") || fullText.includes("crater") || (fullText.includes("road") && !fullText.includes("light")) || fullText.includes("பள்ளம்") || fullText.includes("சாலை")) {
+            return "சாலையில் இருந்த பள்ளங்கள் மூடப்பட்டு சாலை சமன்படுத்தப்பட்டது.";
+        }
+        if (fullText.includes("light") || fullText.includes("bulb") || fullText.includes("lamp") || fullText.includes("dark") || fullText.includes("electric") || fullText.includes("தெருவிளக்கு")) {
+            return "பழுதான தெருவிளக்கு பழுதுபார்க்கப்பட்டு புதிய மின்விளக்கு பொருத்தப்பட்டது.";
+        }
+        if (fullText.includes("garbage") || fullText.includes("waste") || fullText.includes("trash") || fullText.includes("குப்பை") || fullText.includes("கழிவு")) {
+            return "குப்பைகள் முழுமையாக அகற்றப்பட்டு அப்பகுதி துப்புரவு செய்யப்பட்டது.";
+        }
+        if (fullText.includes("water") || fullText.includes("leak") || fullText.includes("pipe") || fullText.includes("கசிவு")) {
+            return "குடிநீர் குழாய் கசிவு சரிசெய்யப்பட்டு குடிநீர் விநியோகம் சீரமைக்கப்பட்டது.";
+        }
+        return "நகராட்சி குழுவால் ஆய்வு செய்யப்பட்டு பிரச்சனைக்கு தீர்வு காணப்பட்டது.";
+    }
+
+    // Default English
+    if (fullText.includes("manhole")) {
+        return "Open manhole inspected, cleared, and safely secured with heavy-duty cast iron lid; safety hazard eliminated.";
+    }
+    if (fullText.includes("drain") || fullText.includes("sewer") || fullText.includes("gutter") || (fullText.includes("water") && fullText.includes("stagnant"))) {
+        return "Drainage channel cleared and desilted; unobstructed water flow restored.";
+    }
+    if (fullText.includes("pothole") || fullText.includes("crater") || fullText.includes("asphalt") || fullText.includes("pavement") || (fullText.includes("road") && !fullText.includes("light"))) {
+        return "Pothole filled with asphalt, compacted, and road surface leveled.";
+    }
+    if (fullText.includes("light") || fullText.includes("bulb") || fullText.includes("lamp") || fullText.includes("dark") || fullText.includes("electric")) {
+        return "Faulty streetlight wiring and bulb replaced; illumination fully restored.";
+    }
+    if (fullText.includes("garbage") || fullText.includes("waste") || fullText.includes("trash") || fullText.includes("dump") || fullText.includes("rubbish")) {
+        return "Garbage and accumulated waste cleared by sanitation team; area sanitized.";
+    }
+    if (fullText.includes("water") || fullText.includes("leak") || fullText.includes("pipe") || fullText.includes("pipeline")) {
+        return "Water pipeline leak repaired and normal supply pressure restored.";
+    }
+    return `Issue "${complaint?.title || 'reported'}" inspected and resolved by municipal crew.`;
+}
+
+// Status update with resolution note prompt
+async function updateStatusPrompt(id, newStatus) {
+    let resolutionNote = "";
+    if (newStatus === "Resolved") {
+        const complaint = allComplaints.find(c => c._id === id);
+        const suggestion = getSmartResolutionSuggestion(complaint);
+        const issueTitle = complaint?.title ? `"${complaint.title}"` : "this issue";
+
+        let promptText = `Enter resolution remarks for the citizen regarding ${issueTitle}:`;
+        if (typeof i18n !== "undefined" && i18n.currentLang === "hi") {
+            promptText = `${issueTitle} के समाधान का विवरण दर्ज करें:`;
+        } else if (typeof i18n !== "undefined" && i18n.currentLang === "ta") {
+            promptText = `${issueTitle} குறித்த தீர்வு குறிப்பை உள்ளிடவும்:`;
+        }
+
+        resolutionNote = prompt(promptText, suggestion);
+        if (resolutionNote === null) return loadComplaints(); // User cancelled
+    }
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/complaints/${id}/status`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus, resolutionNote })
+        });
+
+        if (response.ok) {
+            loadComplaints();
+        } else {
+            alert("Failed to update status");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Server communication error");
+    }
+}
+
+// Category update
+async function updateCategory(id, category) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/complaints/${id}/category`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ category })
+        });
+        if (response.ok) {
+            loadComplaints();
+        } else {
+            alert("Failed to update category");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Server error");
+    }
+}
+
+// Department update
+async function updateDepartment(id, department) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/complaints/${id}/department`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ department })
+        });
+        if (response.ok) {
+            loadComplaints();
+        } else {
+            alert("Failed to update department");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Server error");
+    }
+}
+
+// Toggle Moderation Flag
+async function toggleFlag(id, isFlagged) {
+    const reason = isFlagged ? prompt("Reason for flagging this complaint (e.g., 'Spam text', 'Duplicate report'):", "Flagged by Admin Review") : "";
+    if (isFlagged && reason === null) return;
+
+    try {
+        const res = await fetch(`http://localhost:5000/api/complaints/${id}/flag`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isFlagged, flagReason: reason })
+        });
+        if (res.ok) {
+            loadComplaints();
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// Analytics Charts (Chart.js)
+function loadAnalytics(complaints) {
+    let categoryCounts = {};
+    let departmentCounts = {};
+
+    complaints.forEach(c => {
+        const cat = (c.category || "Other").trim();
+        const dept = c.department || "Not Assigned";
+        const transCat = (typeof i18n !== "undefined" && i18n.translateCategory) ? i18n.translateCategory(cat) : cat;
+        const transDept = (typeof i18n !== "undefined" && i18n.translateDepartment) ? i18n.translateDepartment(dept) : dept;
+        categoryCounts[transCat] = (categoryCounts[transCat] || 0) + 1;
+        departmentCounts[transDept] = (departmentCounts[transDept] || 0) + 1;
+    });
+
+    if (categoryChart) categoryChart.destroy();
+    if (departmentChart) departmentChart.destroy();
+
+    const catCtx = document.getElementById("categoryChart");
+    if (catCtx) {
+        categoryChart = new Chart(catCtx, {
+            type: "bar",
+            data: {
+                labels: Object.keys(categoryCounts),
+                datasets: [{
+                    label: typeof i18n !== "undefined" ? i18n.t("stat_total") : "Complaints",
+                    data: Object.values(categoryCounts),
+                    backgroundColor: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+
+    const deptCtx = document.getElementById("departmentChart");
+    if (deptCtx) {
+        departmentChart = new Chart(deptCtx, {
+            type: "doughnut",
+            data: {
+                labels: Object.keys(departmentCounts),
+                datasets: [{
+                    data: Object.values(departmentCounts),
+                    backgroundColor: ["#0284c7", "#22c55e", "#eab308", "#f97316", "#a855f7", "#64748b"]
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    }
+}
+
+// Export Complaints to CSV
+function exportToCSV() {
+    if (allComplaints.length === 0) {
+        alert("No complaints available to export.");
+        return;
+    }
+
+    const headers = ["Complaint ID", "Citizen Name", "Citizen Email", "Title", "Category", "Priority", "Department", "Status", "Location", "Credibility", "Reported Date"];
+    const rows = allComplaints.map(c => [
+        `"${c.complaintId || ''}"`,
+        `"${c.userId?.name || ''}"`,
+        `"${c.userId?.email || ''}"`,
+        `"${(c.title || '').replace(/"/g, '""')}"`,
+        `"${c.category || ''}"`,
+        `"${c.priority || ''}"`,
+        `"${c.department || ''}"`,
+        `"${c.status || ''}"`,
+        `"${(c.location || '').replace(/"/g, '""')}"`,
+        `"${c.credibilityScore || 80}"`,
+        `"${new Date(c.createdAt).toLocaleDateString()}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `SmartCivic_Complaints_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Re-render table and analytics in real time when language is switched
+window.addEventListener("languageChanged", () => {
+    applyFilterAndRender();
+    if (allComplaints.length > 0) {
+        loadAnalytics(allComplaints);
+    }
+});
+
+// Initial Load
+document.addEventListener("DOMContentLoaded", () => {
+    initCityMap();
+    loadComplaints();
+});
+</script>
+
+</body>
+</html>

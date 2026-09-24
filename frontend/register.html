@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Register - SMARTCIVIC AI</title>
+
+    <link rel="stylesheet" href="auth.css">
+
+</head>
+
+
+<body>
+
+    <div class="auth-container">
+
+
+        <!-- LEFT SIDE -->
+
+        <div class="auth-left">
+
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    🏙️
+                </div>
+
+                <div>
+
+                    <h1>
+                        SMARTCIVIC <span>AI</span>
+                    </h1>
+
+                    <p>
+                        Intelligent Civic Complaint Management
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="hero-content">
+
+
+                <div class="small-label">
+                    JOIN THE SMART CITY COMMUNITY
+                </div>
+
+
+                <h2>
+                    Help Make Your City<br>
+                    <span>Smarter & Better.</span>
+                </h2>
+
+
+                <p>
+                    Create your SmartCivic AI account and
+                    help report, track and improve civic issues
+                    in your community.
+                </p>
+
+
+
+                <div class="features">
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            📍
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Report Easily
+                            </h3>
+
+                            <p>
+                                Submit civic problems from anywhere.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            🤖
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                AI Powered
+                            </h3>
+
+                            <p>
+                                AI helps classify your complaint.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">
+                            📊
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Track Progress
+                            </h3>
+
+                            <p>
+                                Follow your complaint status.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div class="left-footer">
+
+                SmartCivic AI • Building Better Communities
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="auth-right">
+
+
+            <div class="login-card">
+
+
+                <div class="mobile-logo">
+                    🏙️
+                </div>
+
+
+
+                <div class="form-header">
+
+
+                    <span class="welcome-tag">
+                        CREATE ACCOUNT
+                    </span>
+
+
+                    <h2>
+                        Join SmartCivic AI
+                    </h2>
+
+
+                    <p>
+                        Create your account to report civic issues
+                    </p>
+
+
+                </div>
+
+
+
+                <form id="registerForm">
+
+
+
+                    <!-- NAME -->
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Full Name
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <span class="input-icon">
+                                👤
+                            </span>
+
+
+                            <input
+                                type="text"
+                                id="name"
+                                placeholder="Enter your full name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <span class="input-icon">
+                                ✉️
+                            </span>
+
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="Enter your email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <span class="input-icon">
+                                🔒
+                            </span>
+
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Create a password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                onclick="togglePassword('password', this)"
+                            >
+                                👁️
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="confirmPassword">
+                            Confirm Password
+                        </label>
+
+
+                        <div class="input-box">
+
+                            <span class="input-icon">
+                                🔐
+                            </span>
+
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Confirm your password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                onclick="togglePassword('confirmPassword', this)"
+                            >
+                                👁️
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ACCOUNT TYPE / ROLE -->
+                    <div class="form-group">
+                        <label for="role">Account Type</label>
+                        <div class="input-box">
+                            <span class="input-icon">👤</span>
+                            <select id="role" name="role">
+                                <option value="citizen">Citizen (General Public)</option>
+                                <option value="admin">Municipal Officer / Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- REGISTER BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="login-btn"
+                    >
+
+                        <span>
+                            Create SmartCivic Account
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+
+                    <!-- MESSAGE -->
+
+                    <p
+                        id="message"
+                        class="message"
+                    ></p>
+
+
+                </form>
+
+
+
+                <!-- LOGIN LINK -->
+
+                <div class="divider">
+
+                    <span>
+                        ALREADY HAVE AN ACCOUNT?
+                    </span>
+
+                </div>
+
+
+
+                <a
+                    href="login.html"
+                    class="register-btn"
+                >
+                    Back to Login
+                </a>
+
+
+
+                <p class="security-text">
+
+                    🔐 Your account information is securely protected.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <script>
+
+
+        /* PASSWORD SHOW / HIDE */
+
+        function togglePassword(fieldId, button) {
+
+            const password =
+                document.getElementById(fieldId);
+
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+                button.textContent = "🙈";
+
+            } else {
+
+                password.type = "password";
+
+                button.textContent = "👁️";
+
+            }
+
+        }
+
+
+
+        /* REGISTRATION */
+
+        document
+            .getElementById("registerForm")
+            .addEventListener("submit", async function (event) {
+
+                event.preventDefault();
+
+
+                const name =
+                    document
+                        .getElementById("name")
+                        .value
+                        .trim();
+
+
+                const email =
+                    document
+                        .getElementById("email")
+                        .value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById("password")
+                        .value;
+
+
+                const confirmPassword =
+                    document
+                        .getElementById("confirmPassword")
+                        .value;
+
+
+                const message =
+                    document
+                        .getElementById("message");
+
+
+                const registerButton =
+                    document.querySelector(".login-btn");
+
+
+
+                message.textContent = "";
+
+                message.className = "message";
+
+
+
+                /* PASSWORD CHECK */
+
+                if (password !== confirmPassword) {
+
+                    message.className =
+                        "message error";
+
+                    message.textContent =
+                        "Passwords do not match.";
+
+                    return;
+
+                }
+
+
+
+                /* PASSWORD LENGTH */
+
+                if (password.length < 6) {
+
+                    message.className =
+                        "message error";
+
+                    message.textContent =
+                        "Password must contain at least 6 characters.";
+
+                    return;
+
+                }
+
+
+
+                registerButton.disabled = true;
+
+
+                registerButton.innerHTML =
+                    '<span>Creating account...</span><span class="loader"></span>';
+
+
+
+                try {
+
+
+                                const role = document.getElementById("role") ? document.getElementById("role").value : "citizen";
+
+                                const response =
+                                    await fetch(
+                                        "http://localhost:5000/api/register",
+                                        {
+
+                                            method: "POST",
+
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+
+                                            body: JSON.stringify({
+
+                                                name: name,
+
+                                                email: email,
+
+                                                password: password,
+
+                                                role: role
+
+                                            })
+
+                                        }
+                                    );
+
+
+
+                    const data =
+                        await response.json();
+
+
+
+                    if (response.ok) {
+
+
+                        message.className =
+                            "message success";
+
+
+                        message.textContent =
+                            "Account created successfully! Redirecting to login...";
+
+
+                        document
+                            .getElementById("registerForm")
+                            .reset();
+
+
+
+                        setTimeout(function () {
+
+                            window.location.href =
+                                "login.html";
+
+                        }, 1200);
+
+
+                    } else {
+
+
+                        message.className =
+                            "message error";
+
+
+                        message.textContent =
+                            data.message ||
+                            "Registration failed.";
+
+
+                        registerButton.disabled =
+                            false;
+
+
+                        registerButton.innerHTML =
+                            '<span>Create SmartCivic Account</span><span class="arrow">→</span>';
+
+                    }
+
+
+                } catch (error) {
+
+
+                    console.error(error);
+
+
+                    message.className =
+                        "message error";
+
+
+                    message.textContent =
+                        "Unable to connect to server. Please make sure the backend is running.";
+
+
+                    registerButton.disabled =
+                        false;
+
+
+                    registerButton.innerHTML =
+                        '<span>Create SmartCivic Account</span><span class="arrow">→</span>';
+
+                }
+
+
+            });
+
+
+    </script>
+
+    <script src="i18n.js"></script>
+
+</body>
+
+</html>

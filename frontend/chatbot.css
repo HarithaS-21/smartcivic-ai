@@ -1,0 +1,283 @@
+/* ===================================================
+   SmartCivic AI - CivicBot Assistant Styles
+   =================================================== */
+
+.civic-chat-toggle {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #06b6d4 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(29, 78, 216, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    z-index: 9999;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    outline: none;
+}
+
+.civic-chat-toggle:hover {
+    transform: scale(1.08) translateY(-3px);
+    box-shadow: 0 12px 30px rgba(29, 78, 216, 0.55);
+}
+
+.civic-chat-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background: #10b981;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+/* Chat Window Modal */
+.civic-chat-window {
+    position: fixed;
+    bottom: 95px;
+    right: 25px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 540px;
+    max-height: calc(100vh - 120px);
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9998;
+    animation: civicChatSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    font-family: inherit;
+}
+
+.civic-chat-window.active {
+    display: flex;
+}
+
+@keyframes civicChatSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+.civic-chat-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 70%, #0ea5e9 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.civic-chat-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.civic-chat-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.civic-chat-title h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.civic-chat-title p {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    opacity: 0.85;
+}
+
+.civic-chat-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    line-height: 1;
+}
+
+.civic-chat-close-btn:hover {
+    opacity: 1;
+}
+
+/* Quick Suggestion Chips */
+.civic-chat-chips {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #f8fafc;
+    border-bottom: 1px solid #edf2f7;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+}
+.civic-chat-chips::-webkit-scrollbar {
+    display: none;
+}
+
+.civic-chip {
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.civic-chip:hover {
+    background: #2563eb;
+    color: white;
+}
+
+/* Messages Area */
+.civic-chat-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc;
+}
+
+.civic-msg {
+    max-width: 82%;
+    padding: 11px 15px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.civic-msg.bot {
+    align-self: flex-start;
+    background: #ffffff;
+    color: #1e293b;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.civic-msg.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+    color: white;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 3px 8px rgba(29, 78, 216, 0.25);
+}
+
+.civic-msg-card {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 12px;
+    border-left: 3px solid #2563eb;
+}
+
+.civic-typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: #ffffff;
+    border-radius: 12px;
+    width: fit-content;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.civic-typing-dot {
+    width: 6px;
+    height: 6px;
+    background: #94a3b8;
+    border-radius: 50%;
+    animation: civicTyping 1.4s infinite ease-in-out both;
+}
+.civic-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.civic-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes civicTyping {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* Footer / Input Box */
+.civic-chat-footer {
+    padding: 12px 16px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.civic-chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 24px;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #f8fafc;
+}
+
+.civic-chat-input:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+.civic-chat-send {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: transform 0.2s, background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.civic-chat-send:hover {
+    background: #1e40af;
+    transform: scale(1.05);
+}
