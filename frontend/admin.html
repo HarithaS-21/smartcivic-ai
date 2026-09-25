@@ -734,9 +734,11 @@ function updateCityMapMarkers(complaints) {
 }
 
 // Load All Complaints
+const API_BASE = (window.location.protocol === "file:" || window.location.port === "3000") ? "http://localhost:5000" : "";
+
 async function loadComplaints() {
     try {
-        const response = await fetch("http://localhost:5000/api/complaints");
+        const response = await fetch(`${API_BASE}/api/complaints`);
         if (!response.ok) throw new Error("Failed to fetch complaints");
 
         const complaints = await response.json();
@@ -752,7 +754,7 @@ async function loadComplaints() {
         document.getElementById("complaintTable").innerHTML = `
             <tr>
                 <td colspan="9" style="text-align:center;color:#ef4444;padding:30px;">
-                    Failed to connect to server. Please verify backend is running on http://localhost:5000.
+                    Failed to connect to server. Please verify backend is running.
                 </td>
             </tr>
         `;
@@ -857,7 +859,7 @@ function displayComplaints(complaints) {
         // Photo thumbnail
         let photoHtml = `<span style="color:#94a3b8;font-size:12px;">${typeof i18n !== "undefined" ? i18n.t("tag_no_photo") : "No photo"}</span>`;
         if (complaint.imageUrl) {
-            const fullUrl = complaint.imageUrl.startsWith("http") ? complaint.imageUrl : `http://localhost:5000${complaint.imageUrl}`;
+            const fullUrl = complaint.imageUrl.startsWith("http") ? complaint.imageUrl : `${API_BASE}${complaint.imageUrl}`;
             photoHtml = `
                 <img 
                     src="${fullUrl}" 
@@ -1068,7 +1070,7 @@ async function updateStatusPrompt(id, newStatus) {
     }
 
     try {
-        const response = await fetch(`http://localhost:5000/api/complaints/${id}/status`, {
+        const response = await fetch(`${API_BASE}/api/complaints/${id}/status`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: newStatus, resolutionNote })
@@ -1088,7 +1090,7 @@ async function updateStatusPrompt(id, newStatus) {
 // Category update
 async function updateCategory(id, category) {
     try {
-        const response = await fetch(`http://localhost:5000/api/complaints/${id}/category`, {
+        const response = await fetch(`${API_BASE}/api/complaints/${id}/category`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ category })
@@ -1107,7 +1109,7 @@ async function updateCategory(id, category) {
 // Department update
 async function updateDepartment(id, department) {
     try {
-        const response = await fetch(`http://localhost:5000/api/complaints/${id}/department`, {
+        const response = await fetch(`${API_BASE}/api/complaints/${id}/department`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ department })
@@ -1129,7 +1131,7 @@ async function toggleFlag(id, isFlagged) {
     if (isFlagged && reason === null) return;
 
     try {
-        const res = await fetch(`http://localhost:5000/api/complaints/${id}/flag`, {
+        const res = await fetch(`${API_BASE}/api/complaints/${id}/flag`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ isFlagged, flagReason: reason })

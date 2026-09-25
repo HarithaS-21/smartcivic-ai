@@ -561,9 +561,11 @@ function closeLightbox() {
 }
 
 // Rating submission helper
+const API_BASE = (window.location.protocol === "file:" || window.location.port === "3000") ? "http://localhost:5000" : "";
+
 async function submitRating(complaintId, rating) {
     try {
-        const res = await fetch(`http://localhost:5000/api/complaints/${complaintId}/rating`, {
+        const res = await fetch(`${API_BASE}/api/complaints/${complaintId}/rating`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ rating: rating })
@@ -581,7 +583,7 @@ async function loadMyComplaints() {
     const list = document.getElementById("complaintsList");
 
     try {
-        const response = await fetch(`http://localhost:5000/api/complaints/user/${user.id}`);
+        const response = await fetch(`${API_BASE}/api/complaints/user/${user.id}`);
         const complaints = await response.json();
 
         if (!response.ok) {
@@ -640,7 +642,7 @@ async function loadMyComplaints() {
             // Photo HTML if present
             let photoHtml = "";
             if (complaint.imageUrl) {
-                const fullImgUrl = complaint.imageUrl.startsWith("http") ? complaint.imageUrl : `http://localhost:5000${complaint.imageUrl}`;
+                const fullImgUrl = complaint.imageUrl.startsWith("http") ? complaint.imageUrl : `${API_BASE}${complaint.imageUrl}`;
                 const clickEnlargeTxt = (typeof i18n !== "undefined" && i18n.t) ? i18n.t("card_click_enlarge") : "🔍 Click to enlarge";
                 photoHtml = `
                     <div>

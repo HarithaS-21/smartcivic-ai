@@ -1,0 +1,20 @@
+{
+  "name": "smartcivic-ai",
+  "version": "1.0.0",
+  "description": "SmartCivic AI - AI-Powered Civic Complaint & Smart Governance Platform",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "build": "cd backend && npm install",
+    "postinstall": "cd backend && npm install"
+  },
+  "keywords": [
+    "civic-tech",
+    "smart-city",
+    "ai",
+    "nlp",
+    "governance"
+  ],
+  "author": "",
+  "license": "ISC"
+}

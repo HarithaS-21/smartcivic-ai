@@ -4,7 +4,7 @@
 
 const CivicBot = {
     isOpen: false,
-    backendUrl: "http://localhost:5000",
+    backendUrl: (window.location.protocol === "file:" || window.location.port === "3000") ? "http://localhost:5000" : window.location.origin,
 
     init: function () {
         this.injectWidgetHTML();

@@ -49,8 +49,11 @@ const upload = multer({
 });
 
 // Root Health Check
+// Serve frontend
+app.use(express.static(path.join(__dirname, "../frontend")));
+
 app.get("/", (req, res) => {
-    res.send("SmartCivic AI Backend is Running with Advanced Civic Features");
+    res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 // ==========================================
@@ -672,8 +675,9 @@ process.on("uncaughtException", (err) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-    console.log(`SmartCivic AI Server running on http://localhost:${PORT}`);
+
+const server = app.listen(PORT, "0.0.0.0", () => {
+    console.log(`SmartCivic AI Server running on port ${PORT}`);
 });
 
 server.on("error", (err) => {
@@ -681,7 +685,7 @@ server.on("error", (err) => {
 });
 
 // Keep-alive timer
-setInterval(() => {}, 60000);
+setInterval(() => { }, 60000);
 
 mongoose.connect(process.env.MONGODB_URI, {
     serverSelectionTimeoutMS: 5000
